@@ -22,8 +22,7 @@ Some additional experiments and extended detection approaches are also included.
 
 ## Repository Structure
 
-```text
-.
+```
 ├── figure1_simulation.py   # Fig.1 reproduction (sequence comparison)
 ├── figure2_simulation.py   # Fig.2 reproduction (detector comparison)
 ├── my_first_test.py        # Extended simulation
