@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# 参数设置
+# Basic parameters
 N = 9
 u0, u1 = 1, 2
 ga, gb = 4, 0
@@ -20,11 +20,13 @@ ADD_PHASE_NOISE = False
 
 
 def generate_zc(N, u):
+    """Generate a Zadoff-Chu sequence."""
     k = np.arange(N)
     return np.exp(-1j * np.pi * u * k * (k + 1) / N)
 
 
 def lpp_map(N, g, b):
+    """Linear permutation mapping."""
     return (g * np.arange(N) + b) % N
 
 
@@ -36,10 +38,7 @@ def generate_spi_zc(N, u0, u1, ga, gb, gc, gd):
 
 
 def apply_channel(sig, delay, f_norm, snr_db, add_phase_noise=False):
-    """
-    delay: integer timing offset
-    f_norm: normalized CFO
-    """
+    """Apply delay, CFO, optional phase noise, and AWGN."""
     N = len(sig)
     k = np.arange(N)
 
@@ -58,6 +57,7 @@ def apply_channel(sig, delay, f_norm, snr_db, add_phase_noise=False):
 
 
 def correlate(received, reference):
+    """Circular correlation over all delays."""
     N = len(received)
     rho = np.zeros(N, dtype=complex)
     for d in range(N):
@@ -101,6 +101,7 @@ def method_30_detector(received, reference, N, L):
     else:
         raise ValueError("Unsupported L value.")
 
+    # Search over candidate CFO values
     for fc in fc_candidates:
         comp_signal = received * np.exp(-1j * 2 * np.pi * fc * k / N)
         rho = correlate(comp_signal, reference)
