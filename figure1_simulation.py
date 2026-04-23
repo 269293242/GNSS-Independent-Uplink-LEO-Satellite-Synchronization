@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# 参数设置
+# Basic parameters
 N = 9
 u0, u1 = 1, 2
 ga, gb = 4, 0
@@ -21,11 +21,13 @@ ADD_PHASE_NOISE = False
 
 
 def generate_zc(N, u):
+    """Generate a Zadoff-Chu sequence."""
     k = np.arange(N)
     return np.exp(-1j * np.pi * u * k * (k + 1) / N)
 
 
 def lpp_map(N, g, b):
+    """Linear permutation mapping."""
     return (g * np.arange(N) + b) % N
 
 
@@ -41,10 +43,7 @@ def generate_double_zc(N, u0, u1):
 
 
 def apply_channel(sig, delay, f_norm, snr_db, add_phase_noise=False):
-    """
-    delay: integer timing offset
-    f_norm: normalized CFO
-    """
+    """Apply delay, CFO, optional phase noise, and AWGN."""
     N = len(sig)
     k = np.arange(N)
 
@@ -63,6 +62,7 @@ def apply_channel(sig, delay, f_norm, snr_db, add_phase_noise=False):
 
 
 def correlate(received, reference):
+    """Circular correlation over all delays."""
     N = len(received)
     rho = np.zeros(N, dtype=complex)
     for d in range(N):
@@ -99,6 +99,7 @@ def double_zc_detector(received, x0, x1, N, H):
     best_metric = -np.inf
     k = np.arange(N)
 
+    # Exhaustive search over integer CFO hypotheses
     for f_int in range(H):
         f_norm = f_int - (H - 1) // 2
         comp = received * np.exp(-1j * 2 * np.pi * f_norm * k / N)
